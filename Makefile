@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs ps
+.PHONY: help build up down restart logs ps secrets
 
 # Цвета для вывода
 GREEN := \033[0;32m
@@ -26,3 +26,7 @@ logs: ## Показать логи всех контейнеров
 
 ps: ## Показать статус контейнеров
 	docker compose ps
+
+secrets: ## Сканировать код на утечку секретов (Gitleaks)
+	@echo "$(BLUE)Сканирование на утечки секретов...$(NC)"
+	gitleaks detect --source . --no-git --config .gitleaks.toml -v

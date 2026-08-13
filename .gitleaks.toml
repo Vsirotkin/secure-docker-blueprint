@@ -1,0 +1,11 @@
+# Конфигурация Gitleaks для проекта secure-docker-blueprint
+title = "Gitleaks config for secure-docker-blueprint"
+
+[allowlist]
+description = "Allowlist for documentation and example files"
+paths = [
+  '''README\.md''',
+]
+
+# Также можно игнорировать конкретные правила для определенных файлов
+# или использовать regex для игнорирования определенных паттернов
