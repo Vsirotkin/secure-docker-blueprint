@@ -1,12 +1,13 @@
-# Используем минимальный Alpine образ (в нем уже есть пользователь nginx)
-FROM nginx:1.25-alpine
+# Используем Debian-based образ для лучшей поддержки безопасности
+FROM nginx:1.27-bookworm
 
 # Устанавливаем curl для health check
-RUN apk add --no-cache curl
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
 
-# Удаляем дефолтный контент и кэш
+# Удаляем дефолтный контент
 RUN rm -rf /usr/share/nginx/html/* && \
-    rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
 
 # Копируем конфигурации
@@ -28,7 +29,7 @@ RUN mkdir -p /var/cache/nginx/client_temp \
 # Переключаемся на non-root пользователя
 USER nginx
 
-# Health check для мониторинга (используем curl вместо wget)
+# Health check для мониторинга
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/ || exit 1
 

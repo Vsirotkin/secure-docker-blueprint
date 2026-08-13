@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs ps secrets
+.PHONY: help build up down restart logs ps secrets scan sbom rebuild
 
 # Цвета для вывода
 GREEN := \033[0;32m
@@ -12,8 +12,8 @@ help: ## Показать это сообщение
 build: ## Собрать все Docker образы
 	docker compose build
 
-up: ## Запустить все контейнеры
-	docker compose up -d
+up: ## Запустить все контейнеры (с пересборкой)
+	docker compose up -d --build
 
 down: ## Остановить и удалить контейнеры
 	docker compose down
@@ -30,3 +30,33 @@ ps: ## Показать статус контейнеров
 secrets: ## Сканировать код на утечку секретов (Gitleaks)
 	@echo "$(BLUE)Сканирование на утечки секретов...$(NC)"
 	gitleaks detect --source . --no-git --config .gitleaks.toml -v
+
+scan: ## Сканировать Docker-образы на уязвимости (Trivy)
+	@echo "$(BLUE)Сканирование образа nginx...$(NC)"
+	trivy image --severity CRITICAL,HIGH secure-docker-blueprint-nginx:latest
+	@echo ""
+	@echo "$(BLUE)Сканирование образа backend...$(NC)"
+	trivy image --severity CRITICAL,HIGH secure-docker-blueprint-backend:latest
+	@echo ""
+	@echo "$(BLUE)Сканирование образа postgres...$(NC)"
+	trivy image --severity CRITICAL,HIGH postgres:16-bookworm
+
+sbom: ## Генерировать SBOM для всех Docker-образов (Syft)
+	@mkdir -p sbom
+	@echo "$(BLUE)Генерация SBOM для nginx...$(NC)"
+	syft scan secure-docker-blueprint-nginx:latest -o cyclonedx-json > sbom/nginx-sbom.json
+	@echo "$(GREEN)✓ Сохранено: sbom/nginx-sbom.json$(NC)"
+	@echo ""
+	@echo "$(BLUE)Генерация SBOM для backend...$(NC)"
+	syft scan secure-docker-blueprint-backend:latest -o cyclonedx-json > sbom/backend-sbom.json
+	@echo "$(GREEN)✓ Сохранено: sbom/backend-sbom.json$(NC)"
+	@echo ""
+	@echo "$(BLUE)Генерация SBOM для postgres...$(NC)"
+	syft scan postgres:16-bookworm -o cyclonedx-json > sbom/postgres-sbom.json
+	@echo "$(GREEN)✓ Сохранено: sbom/postgres-sbom.json$(NC)"
+	@echo ""
+	@echo "$(GREEN)Все SBOM сгенерированы в папке sbom/$(NC)"
+
+rebuild: ## Полная пересборка всех образов (удаление и сборка заново)
+	docker compose down --rmi all
+	docker compose up -d --build

@@ -1,7 +1,7 @@
 # ============================================
 # Stage 1: Builder - устанавливаем зависимости
 # ============================================
-FROM python:3.12-slim AS builder
+FROM python:3.12-bookworm AS builder
 
 # Устанавливаем системные зависимости для сборки psycopg2
 RUN apt-get update && \
@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # ============================================
 # Stage 2: Runtime - минимальный production образ
 # ============================================
-FROM python:3.12-slim
+FROM python:3.12-bookworm
 
 # Устанавливаем только runtime зависимости (без build-tools)
 RUN apt-get update && \
