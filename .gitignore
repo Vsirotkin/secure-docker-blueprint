@@ -1,4 +1,19 @@
+# Environment variables (секреты не коммитим)
 .env
-.env.*
-!.env.example
+
+# Python virtual environments
+backend/.venv/
+
+# Generated SBOM files (большие и часто меняются)
 sbom/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/

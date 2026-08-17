@@ -16,8 +16,75 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    # Testing
     "pytest>=7.4.0",
     "pytest-django>=4.5.0",
-    "black>=23.0.0",
+    # Linting & Formatting
     "ruff>=0.1.0",
+    # Type checking
+    "mypy>=1.7.0",
+    # Security
+    "bandit>=1.7.0",
+    "pip-audit>=2.6.0",
+]
+
+# ============================================
+# Ruff configuration
+# ============================================
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+exclude = [
+    ".venv",
+    "__pycache__",
+    "migrations",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "B",   # flake8-bugbear
+    "S",   # flake8-bandit (security)
+    "UP",  # pyupgrade
+]
+ignore = [
+    "S101",  # Use of assert detected (нужно для тестов)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]  # Разрешаем assert в тестах
+
+# ============================================
+# MyPy configuration
+# ============================================
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+exclude = [
+    ".venv",
+    "migrations",
+]
+
+[[tool.mypy.overrides]]
+module = "django.*"
+ignore_errors = false
+
+[tool.django-stubs]
+django_settings_module = "app.settings"
+
+# ============================================
+# Pytest configuration
+# ============================================
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "app.settings"
+python_files = ["test_*.py", "*_test.py"]
+addopts = "-v --tb=short"
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.1.0",
 ]
