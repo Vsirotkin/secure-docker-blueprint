@@ -87,4 +87,5 @@ addopts = "-v --tb=short"
 [dependency-groups]
 dev = [
     "django-stubs>=6.1.0",
+    "pre-commit>=4.6.2",
 ]
