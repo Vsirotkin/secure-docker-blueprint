@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs ps secrets scan sbom rebuild
+.PHONY: help build up down restart logs ps secrets scan sbom rebuild format lint typecheck test audit check
 
 # Цвета для вывода
 GREEN := \033[0;32m
@@ -60,3 +60,40 @@ sbom: ## Генерировать SBOM для всех Docker-образов (Sy
 rebuild: ## Полная пересборка всех образов (удаление и сборка заново)
 	docker compose down --rmi all
 	docker compose up -d --build
+
+# ============================================
+# Code Quality Commands (работают локально через uv)
+# ============================================
+format: ## Отформатировать код с помощью Ruff
+	@echo "$(BLUE)Форматирование кода...$(NC)"
+	cd backend && uv run ruff format .
+	@echo "$(GREEN)✓ Код отформатирован$(NC)"
+
+lint: ## Проверить код с помощью Ruff
+	@echo "$(BLUE)Проверка стиля кода...$(NC)"
+	cd backend && uv run ruff check .
+	@echo "$(GREEN)✓ Проверка стиля пройдена$(NC)"
+
+typecheck: ## Проверить типы с помощью MyPy
+	@echo "$(BLUE)Проверка типов...$(NC)"
+	cd backend && uv run mypy .
+	@echo "$(GREEN)✓ Проверка типов пройдена$(NC)"
+
+test: ## Запустить тесты
+	@echo "$(BLUE)Запуск тестов...$(NC)"
+	cd backend && uv run pytest -v
+	@echo "$(GREEN)✓ Все тесты пройдены$(NC)"
+
+audit: ## Проверить зависимости на уязвимости
+	@echo "$(BLUE)Проверка зависимостей на уязвимости...$(NC)"
+	cd backend && uv run pip-audit
+	@echo "$(GREEN)✓ Проверка зависимостей завершена$(NC)"
+
+check: ## Запустить все проверки (format + lint + typecheck + test + audit)
+	@echo "$(BLUE)Запуск полной проверки кода...$(NC)"
+	@make format
+	@make lint
+	@make typecheck
+	@make test
+	@make audit
+	@echo "$(GREEN)✓ Все проверки пройдены успешно!$(NC)"
