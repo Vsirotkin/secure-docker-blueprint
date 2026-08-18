@@ -1,5 +1,3 @@
----
-
 ```markdown
 # 🔒 Secure Docker Blueprint
 
