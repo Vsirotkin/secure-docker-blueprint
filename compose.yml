@@ -10,6 +10,7 @@ services:
       - frontend_net
       - backend_net
     depends_on:
+      - frontend
       - backend
     restart: unless-stopped
     read_only: true
@@ -17,6 +18,24 @@ services:
       - /tmp
       - /var/cache/nginx
       - /var/run/nginx
+    security_opt:
+      - no-new-privileges:true
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vue_frontend
+    networks:
+      - frontend_net
+    depends_on:
+      - backend
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     security_opt:
       - no-new-privileges:true
 
