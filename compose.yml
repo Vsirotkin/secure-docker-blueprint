@@ -1,8 +1,8 @@
 services:
   nginx:
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
     container_name: reverse_proxy
     ports:
       - "80:8080"
