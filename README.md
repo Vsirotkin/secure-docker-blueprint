@@ -14,20 +14,22 @@ A pet project demonstrating enterprise-level container orchestration with securi
 - 🛡️ **Automated Security Scanning**: Gitleaks, Trivy, pip-audit integration
 - 🧪 **Comprehensive Testing**: pytest suite, strict type checking with MyPy
 - 🔄 **CI/CD Automation**: GitHub Actions workflow with quality gates
+- 🖥️ **Vue 3 Dashboard**: Real-time backend health monitoring with reactive UI
 
 ---
 
 ## 🏗️ Architecture
-- **Frontend Network**: Nginx ↔ Django
-- **Backend Network**: Django ↔ PostgreSQL
-- **Database Network**: PostgreSQL isolation
+- **Frontend Network**: Browser → Nginx (serves Vue 3 static files)
+- **Backend Network**: Nginx ↔ Django (proxies /api requests)
+- **Database Network**: Django ↔ PostgreSQL (isolated)
 
 ---
 
 ## 🛠️ Tech Stack
+- **Frontend**: Vue 3, Vite
 - **Backend**: Python 3.12, Django 5.2 LTS, Uvicorn
 - **Database**: PostgreSQL 16 (Debian Bookworm)
-- **Infrastructure**: Docker Compose, Nginx 1.27, GitHub Actions
+- **Infrastructure**: Docker Compose, Nginx 1.27 (multi-stage build), GitHub Actions
 - **Security**: Gitleaks, Trivy, Syft (SBOM), pip-audit
 
 ---
@@ -53,7 +55,8 @@ make build && make up
 ## 📁 Project Structure
 - `.github/workflows/` — CI/CD pipeline
 - `backend/` — Django application
-- `nginx/` — Reverse proxy
+- `frontend/` — Vue 3 dashboard (built into nginx image via multi-stage)
+- `nginx/` — Reverse proxy + frontend static files
 - `compose.yml` — Docker Compose
 - `Makefile` — Automation
 
@@ -67,7 +70,7 @@ make build && make up
 - 🛡️ **Сканирование**: Gitleaks, Trivy, pip-audit
 - 🧪 **Тестирование**: pytest, строгая типизация MyPy
 - 🔄 **CI/CD**: GitHub Actions с quality gates
+- 🖥️ **Frontend**: Vue 3 dashboard для мониторинга статуса backend
 
 ---
 **Контакты:** Виктор Сироткин | 📧 vsirotkin15@gmail.com | 🐙 [GitHub](https://github.com/Vsirotkin)
-```
